@@ -1,0 +1,26 @@
+{
+  "task": "mortality",
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "cfg": {
+    "rounds": 30,
+    "client_frac": 0.5,
+    "local_epochs": 1,
+    "lr": 0.001,
+    "batch_size": 64,
+    "hidden": 64,
+    "head": 32,
+    "dropout": 0.1,
+    "grad_clip": 1.0
+  },
+  "alpha": 50.0,
+  "site_models": {
+    "x_obs_site": "x_obs",
+    "obs_site_only": "obs_only"
+  },
+  "protocol_hash": "d92099ea7c11d517",
+  "min_events_hosp": 5
+}

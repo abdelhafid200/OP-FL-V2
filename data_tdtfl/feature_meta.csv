@@ -1,0 +1,226 @@
+name,var,stat,kind,group,label
+lactate__mean,lactate,mean,cont,bloodgas,lactate
+lactate__min,lactate,min,cont,bloodgas,lactate
+lactate__max,lactate,max,cont,bloodgas,lactate
+lactate__last,lactate,last,cont,bloodgas,lactate
+lactate__n_obs,lactate,n_obs,cont,bloodgas,lactate
+lactate__observed,lactate,observed,bin,bloodgas,lactate
+creatinine__mean,creatinine,mean,cont,routine,creatinine
+creatinine__min,creatinine,min,cont,routine,creatinine
+creatinine__max,creatinine,max,cont,routine,creatinine
+creatinine__last,creatinine,last,cont,routine,creatinine
+creatinine__n_obs,creatinine,n_obs,cont,routine,creatinine
+creatinine__observed,creatinine,observed,bin,routine,creatinine
+bun__mean,BUN,mean,cont,routine,BUN
+bun__min,BUN,min,cont,routine,BUN
+bun__max,BUN,max,cont,routine,BUN
+bun__last,BUN,last,cont,routine,BUN
+bun__n_obs,BUN,n_obs,cont,routine,BUN
+bun__observed,BUN,observed,bin,routine,BUN
+sodium__mean,sodium,mean,cont,routine,sodium
+sodium__min,sodium,min,cont,routine,sodium
+sodium__max,sodium,max,cont,routine,sodium
+sodium__last,sodium,last,cont,routine,sodium
+sodium__n_obs,sodium,n_obs,cont,routine,sodium
+sodium__observed,sodium,observed,bin,routine,sodium
+potassium__mean,potassium,mean,cont,routine,potassium
+potassium__min,potassium,min,cont,routine,potassium
+potassium__max,potassium,max,cont,routine,potassium
+potassium__last,potassium,last,cont,routine,potassium
+potassium__n_obs,potassium,n_obs,cont,routine,potassium
+potassium__observed,potassium,observed,bin,routine,potassium
+bicarbonate__mean,bicarbonate,mean,cont,routine,bicarbonate
+bicarbonate__min,bicarbonate,min,cont,routine,bicarbonate
+bicarbonate__max,bicarbonate,max,cont,routine,bicarbonate
+bicarbonate__last,bicarbonate,last,cont,routine,bicarbonate
+bicarbonate__n_obs,bicarbonate,n_obs,cont,routine,bicarbonate
+bicarbonate__observed,bicarbonate,observed,bin,routine,bicarbonate
+glucose__mean,glucose,mean,cont,routine,glucose
+glucose__min,glucose,min,cont,routine,glucose
+glucose__max,glucose,max,cont,routine,glucose
+glucose__last,glucose,last,cont,routine,glucose
+glucose__n_obs,glucose,n_obs,cont,routine,glucose
+glucose__observed,glucose,observed,bin,routine,glucose
+wbc_x_1000__mean,WBC x 1000,mean,cont,routine,WBC x 1000
+wbc_x_1000__min,WBC x 1000,min,cont,routine,WBC x 1000
+wbc_x_1000__max,WBC x 1000,max,cont,routine,WBC x 1000
+wbc_x_1000__last,WBC x 1000,last,cont,routine,WBC x 1000
+wbc_x_1000__n_obs,WBC x 1000,n_obs,cont,routine,WBC x 1000
+wbc_x_1000__observed,WBC x 1000,observed,bin,routine,WBC x 1000
+hgb__mean,Hgb,mean,cont,routine,Hgb
+hgb__min,Hgb,min,cont,routine,Hgb
+hgb__max,Hgb,max,cont,routine,Hgb
+hgb__last,Hgb,last,cont,routine,Hgb
+hgb__n_obs,Hgb,n_obs,cont,routine,Hgb
+hgb__observed,Hgb,observed,bin,routine,Hgb
+hct__mean,Hct,mean,cont,routine,Hct
+hct__min,Hct,min,cont,routine,Hct
+hct__max,Hct,max,cont,routine,Hct
+hct__last,Hct,last,cont,routine,Hct
+hct__n_obs,Hct,n_obs,cont,routine,Hct
+hct__observed,Hct,observed,bin,routine,Hct
+platelets_x_1000__mean,platelets x 1000,mean,cont,routine,platelets x 1000
+platelets_x_1000__min,platelets x 1000,min,cont,routine,platelets x 1000
+platelets_x_1000__max,platelets x 1000,max,cont,routine,platelets x 1000
+platelets_x_1000__last,platelets x 1000,last,cont,routine,platelets x 1000
+platelets_x_1000__n_obs,platelets x 1000,n_obs,cont,routine,platelets x 1000
+platelets_x_1000__observed,platelets x 1000,observed,bin,routine,platelets x 1000
+total_bilirubin__mean,total bilirubin,mean,cont,routine,total bilirubin
+total_bilirubin__min,total bilirubin,min,cont,routine,total bilirubin
+total_bilirubin__max,total bilirubin,max,cont,routine,total bilirubin
+total_bilirubin__last,total bilirubin,last,cont,routine,total bilirubin
+total_bilirubin__n_obs,total bilirubin,n_obs,cont,routine,total bilirubin
+total_bilirubin__observed,total bilirubin,observed,bin,routine,total bilirubin
+ph__mean,pH,mean,cont,bloodgas,pH
+ph__min,pH,min,cont,bloodgas,pH
+ph__max,pH,max,cont,bloodgas,pH
+ph__last,pH,last,cont,bloodgas,pH
+ph__n_obs,pH,n_obs,cont,bloodgas,pH
+ph__observed,pH,observed,bin,bloodgas,pH
+pao2__mean,paO2,mean,cont,bloodgas,paO2
+pao2__min,paO2,min,cont,bloodgas,paO2
+pao2__max,paO2,max,cont,bloodgas,paO2
+pao2__last,paO2,last,cont,bloodgas,paO2
+pao2__n_obs,paO2,n_obs,cont,bloodgas,paO2
+pao2__observed,paO2,observed,bin,bloodgas,paO2
+paco2__mean,paCO2,mean,cont,bloodgas,paCO2
+paco2__min,paCO2,min,cont,bloodgas,paCO2
+paco2__max,paCO2,max,cont,bloodgas,paCO2
+paco2__last,paCO2,last,cont,bloodgas,paCO2
+paco2__n_obs,paCO2,n_obs,cont,bloodgas,paCO2
+paco2__observed,paCO2,observed,bin,bloodgas,paCO2
+fio2__mean,FiO2,mean,cont,bloodgas,FiO2
+fio2__min,FiO2,min,cont,bloodgas,FiO2
+fio2__max,FiO2,max,cont,bloodgas,FiO2
+fio2__last,FiO2,last,cont,bloodgas,FiO2
+fio2__n_obs,FiO2,n_obs,cont,bloodgas,FiO2
+fio2__observed,FiO2,observed,bin,bloodgas,FiO2
+heartrate__mean,heartrate,mean,cont,monitor,heartrate
+heartrate__min,heartrate,min,cont,monitor,heartrate
+heartrate__max,heartrate,max,cont,monitor,heartrate
+heartrate__last,heartrate,last,cont,monitor,heartrate
+heartrate__n_obs,heartrate,n_obs,cont,monitor,heartrate
+heartrate__observed,heartrate,observed,bin,monitor,heartrate
+sao2__mean,sao2,mean,cont,monitor,sao2
+sao2__min,sao2,min,cont,monitor,sao2
+sao2__max,sao2,max,cont,monitor,sao2
+sao2__last,sao2,last,cont,monitor,sao2
+sao2__n_obs,sao2,n_obs,cont,monitor,sao2
+sao2__observed,sao2,observed,bin,monitor,sao2
+respiration__mean,respiration,mean,cont,monitor,respiration
+respiration__min,respiration,min,cont,monitor,respiration
+respiration__max,respiration,max,cont,monitor,respiration
+respiration__last,respiration,last,cont,monitor,respiration
+respiration__n_obs,respiration,n_obs,cont,monitor,respiration
+respiration__observed,respiration,observed,bin,monitor,respiration
+systemicsystolic__mean,systemicsystolic,mean,cont,monitor,systemicsystolic
+systemicsystolic__min,systemicsystolic,min,cont,monitor,systemicsystolic
+systemicsystolic__max,systemicsystolic,max,cont,monitor,systemicsystolic
+systemicsystolic__last,systemicsystolic,last,cont,monitor,systemicsystolic
+systemicsystolic__n_obs,systemicsystolic,n_obs,cont,monitor,systemicsystolic
+systemicsystolic__observed,systemicsystolic,observed,bin,monitor,systemicsystolic
+systemicdiastolic__mean,systemicdiastolic,mean,cont,monitor,systemicdiastolic
+systemicdiastolic__min,systemicdiastolic,min,cont,monitor,systemicdiastolic
+systemicdiastolic__max,systemicdiastolic,max,cont,monitor,systemicdiastolic
+systemicdiastolic__last,systemicdiastolic,last,cont,monitor,systemicdiastolic
+systemicdiastolic__n_obs,systemicdiastolic,n_obs,cont,monitor,systemicdiastolic
+systemicdiastolic__observed,systemicdiastolic,observed,bin,monitor,systemicdiastolic
+systemicmean__mean,systemicmean,mean,cont,monitor,systemicmean
+systemicmean__min,systemicmean,min,cont,monitor,systemicmean
+systemicmean__max,systemicmean,max,cont,monitor,systemicmean
+systemicmean__last,systemicmean,last,cont,monitor,systemicmean
+systemicmean__n_obs,systemicmean,n_obs,cont,monitor,systemicmean
+systemicmean__observed,systemicmean,observed,bin,monitor,systemicmean
+gcs_total__mean,GCS Total,mean,cont,gcs,GCS Total
+gcs_total__min,GCS Total,min,cont,gcs,GCS Total
+gcs_total__max,GCS Total,max,cont,gcs,GCS Total
+gcs_total__last,GCS Total,last,cont,gcs,GCS Total
+gcs_total__n_obs,GCS Total,n_obs,cont,gcs,GCS Total
+gcs_total__observed,GCS Total,observed,bin,gcs,GCS Total
+eyes__mean,Eyes,mean,cont,gcs,Eyes
+eyes__min,Eyes,min,cont,gcs,Eyes
+eyes__max,Eyes,max,cont,gcs,Eyes
+eyes__last,Eyes,last,cont,gcs,Eyes
+eyes__n_obs,Eyes,n_obs,cont,gcs,Eyes
+eyes__observed,Eyes,observed,bin,gcs,Eyes
+motor__mean,Motor,mean,cont,gcs,Motor
+motor__min,Motor,min,cont,gcs,Motor
+motor__max,Motor,max,cont,gcs,Motor
+motor__last,Motor,last,cont,gcs,Motor
+motor__n_obs,Motor,n_obs,cont,gcs,Motor
+motor__observed,Motor,observed,bin,gcs,Motor
+verbal__mean,Verbal,mean,cont,gcs,Verbal
+verbal__min,Verbal,min,cont,gcs,Verbal
+verbal__max,Verbal,max,cont,gcs,Verbal
+verbal__last,Verbal,last,cont,gcs,Verbal
+verbal__n_obs,Verbal,n_obs,cont,gcs,Verbal
+verbal__observed,Verbal,observed,bin,gcs,Verbal
+gcs_unable__mean,gcs_unable,mean,cont,gcs,gcs_unable
+gcs_unable__min,gcs_unable,min,cont,gcs,gcs_unable
+gcs_unable__max,gcs_unable,max,cont,gcs,gcs_unable
+gcs_unable__last,gcs_unable,last,cont,gcs,gcs_unable
+gcs_unable__n_obs,gcs_unable,n_obs,cont,gcs,gcs_unable
+gcs_unable__observed,gcs_unable,observed,bin,gcs,gcs_unable
+temperature__mean,temperature,mean,cont,temperature,temperature
+temperature__min,temperature,min,cont,temperature,temperature
+temperature__max,temperature,max,cont,temperature,temperature
+temperature__last,temperature,last,cont,temperature,temperature
+temperature__n_obs,temperature,n_obs,cont,temperature,temperature
+temperature__observed,temperature,observed,bin,temperature,temperature
+urine_output__mean,urine_output,mean,cont,urine,urine_output
+urine_output__min,urine_output,min,cont,urine,urine_output
+urine_output__max,urine_output,max,cont,urine,urine_output
+urine_output__last,urine_output,last,cont,urine,urine_output
+urine_output__n_obs,urine_output,n_obs,cont,urine,urine_output
+urine_output__observed,urine_output,observed,bin,urine,urine_output
+urine_output__total,urine_output,total,cont,urine,diurèse totale 24 h
+age,static,static,cont,static,âge
+height,static,static,cont,static,taille
+weight,static,static,cont,static,poids
+gender_female,static,static,bin,static,sexe féminin
+height_missing,static,static,bin,static,taille manquante
+weight_missing,static,static,bin,static,poids manquant
+gender_missing,static,static,bin,static,sexe manquant
+dx__00,dx,onehot,bin,dx,"Sepsis, pulmonary"
+dx__01,dx,onehot,bin,dx,"Infarction, acute myocardial (MI)"
+dx__02,dx,onehot,bin,dx,"CABG alone, coronary artery bypass grafting"
+dx__03,dx,onehot,bin,dx,"CVA, cerebrovascular accident/stroke"
+dx__04,dx,onehot,bin,dx,"CHF, congestive heart failure"
+dx__05,dx,onehot,bin,dx,"Sepsis, renal/UTI (including bladder)"
+dx__06,dx,onehot,bin,dx,Cardiac arrest (with or without respiratory arrest; for respiratory arrest see Respiratory System)
+dx__07,dx,onehot,bin,dx,Emphysema/bronchitis
+dx__08,dx,onehot,bin,dx,Aortic valve replacement (isolated)
+dx__09,dx,onehot,bin,dx,"Bleeding, upper GI"
+dx__10,dx,onehot,bin,dx,"Pneumonia, bacterial"
+dx__11,dx,onehot,bin,dx,"Sepsis, GI"
+dx__12,dx,onehot,bin,dx,"Rhythm disturbance (atrial, supraventricular)"
+dx__13,dx,onehot,bin,dx,Diabetic ketoacidosis
+dx__14,dx,onehot,bin,dx,"Sepsis, unknown"
+dx__15,dx,onehot,bin,dx,"Hemorrhage/hematoma, intracranial"
+dx__16,dx,onehot,bin,dx,Seizures (primary-no structural brain disease)
+dx__17,dx,onehot,bin,dx,Head only trauma
+dx__18,dx,onehot,bin,dx,"Sepsis, cutaneous/soft tissue"
+dx__19,dx,onehot,bin,dx,"Renal failure, acute"
+dx__autre,dx,onehot,bin,dx,autre diagnostic
+dx__manquant,dx,onehot,bin,dx,diagnostic manquant
+pheno__sepsis,phenotype,onehot,bin,phenotype,sepsis
+pheno__cardiovasculaire,phenotype,onehot,bin,phenotype,cardiovasculaire
+pheno__neurologique,phenotype,onehot,bin,phenotype,neurologique
+pheno__respiratoire,phenotype,onehot,bin,phenotype,respiratoire
+pheno__autre,phenotype,onehot,bin,phenotype,autre
+unit__ccu_cticu,unittype,onehot,bin,unit,CCU-CTICU
+unit__csicu,unittype,onehot,bin,unit,CSICU
+unit__cticu,unittype,onehot,bin,unit,CTICU
+unit__cardiac_icu,unittype,onehot,bin,unit,Cardiac ICU
+unit__micu,unittype,onehot,bin,unit,MICU
+unit__med_surg_icu,unittype,onehot,bin,unit,Med-Surg ICU
+unit__neuro_icu,unittype,onehot,bin,unit,Neuro ICU
+unit__sicu,unittype,onehot,bin,unit,SICU
+unit__autre,unittype,onehot,bin,unit,autre
+admit__urgences,admitsource,onehot,bin,admit,urgences
+admit__bloc,admitsource,onehot,bin,admit,bloc
+admit__service,admitsource,onehot,bin,admit,service
+admit__admission_directe,admitsource,onehot,bin,admit,admission_directe
+admit__autre_hopital,admitsource,onehot,bin,admit,autre_hopital
+admit__autre_rea,admitsource,onehot,bin,admit,autre_rea
+admit__autre,admitsource,onehot,bin,admit,autre

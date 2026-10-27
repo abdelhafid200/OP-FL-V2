@@ -1,0 +1,110 @@
+{
+  "statut": "gelée",
+  "verdict_06c": "GELÉE",
+  "date": "2026-10-26T18:32:44",
+  "protocol_hash": "d92099ea7c11d517",
+  "code_sha256": {
+    "opcal_feas.py": "9770a8614e7599eec47e725512db3f7e8a9d7488df8dd2d70a3667e6a4d80d48",
+    "opcal_robust.py": "eaa1313c3521df86b66feb0040c0d2152b8660bf0413478efed4d48fcd5d6201"
+  },
+  "cibles_apprentissage": "a_h des 60 hôpitaux de développement, chacun calculé avec le modèle du pli du protocole qui ne l'a pas vu (prédictions 'transfer' des notebooks 02 et 05, moyennées sur les seeds)",
+  "meta_modele": {
+    "moteur": "opcal_feas.SiteEB (REML), ajusté une fois sur les 60 hôpitaux de développement",
+    "descripteurs": [
+      "cov_lactate",
+      "cov_bloodgas",
+      "cov_invasive_bp",
+      "cov_gcs",
+      "cov_urine",
+      "cov_temperature",
+      "n_unavailable",
+      "mean_coverage",
+      "test_rate_lactate",
+      "test_rate_creatinine",
+      "intensity_lactate",
+      "intensity_creatinine",
+      "age_mean",
+      "female_share",
+      "unit_med_surg_icu",
+      "unit_ccu_cticu",
+      "unit_neuro_icu",
+      "unit_micu",
+      "unit_sicu",
+      "unit_cardiac_icu",
+      "src_ed",
+      "src_or",
+      "src_floor",
+      "src_transfer",
+      "src_direct",
+      "dx_sepsis",
+      "dx_cardiac_surgery",
+      "dx_arrest",
+      "dx_overdose",
+      "dx_stroke",
+      "dx_chf",
+      "dx_ami",
+      "dx_respiratory",
+      "dx_gi_bleed",
+      "dx_dka",
+      "beds_cat",
+      "teaching",
+      "region_midwest",
+      "region_northeast",
+      "region_south",
+      "region_west",
+      "region_missing",
+      "mean_lp",
+      "sd_lp"
+    ],
+    "exclus_par_construction": {
+      "log_size": "test verrouillé = hôpitaux de 100 à 499 séjours ; développement ≥ 500 : toujours hors domaine"
+    },
+    "descripteurs_source": "split train de chaque hôpital verrouillé (adaptation sans label, protocole) ; groupe model = moyenne et ET du logit prédit par le modèle final sur ses patients d'évaluation"
+  },
+  "mecanisme": {
+    "tache": "hyperlactatémie (non dosé = négatif)",
+    "regle": "a_h = mu + 1 × (log r_h − moyenne des log r des hôpitaux de dév.)",
+    "r_h": "part des séjours présents à 48 h redosés en lactate après 24 h, split train"
+  },
+  "modele_evalue": "modèles finaux entraînés sur les 60 hôpitaux de développement (réglages du notebook 02, mêmes seeds), évalués une seule fois",
+  "comparateur_publie_retenu": "E0_aucune",
+  "criteres_confirmatoires": [
+    {
+      "code": "C1",
+      "tache": "mortalité, x_only",
+      "mesure": "R²_τ sur les 96 hôpitaux verrouillés, et gain |CITL|(E1) − |CITL|(OP-Cal)",
+      "seuil": "R²_τ ≥ 0,25 et borne basse de l'IC du gain > 0 (bootstrap des hôpitaux, 2000 tirages)",
+      "statut": "principal"
+    },
+    {
+      "code": "C2",
+      "tache": "mortalité, x_only",
+      "mesure": "|CITL|(E0_aucune) − |CITL|(OP-Cal)",
+      "seuil": "borne basse de l'IC > 0"
+    },
+    {
+      "code": "C3",
+      "tache": "mortalité, x_only",
+      "mesure": "k = 25 : meilleur comparateur simple (local ou rétrécissement fixe) − EB avec a priori OP-Cal",
+      "seuil": "borne basse de l'IC > 0"
+    },
+    {
+      "code": "C4",
+      "tache": "hyperlactatémie, x_only",
+      "mesure": "γ (log du taux de dosage, offset du score)",
+      "seuil": "IC à 95 % exclut 0"
+    },
+    {
+      "code": "S1",
+      "tache": "mortalité, GRU-D",
+      "mesure": "comme C1",
+      "seuil": "secondaire, descriptif"
+    }
+  ],
+  "k_confirmatoire": 25,
+  "regles": [
+    "le test verrouillé est évalué une seule fois ; aucun réglage n'est modifié après lecture des résultats",
+    "aucun label d'un hôpital verrouillé n'entre dans les descripteurs",
+    "tout écart à cette spécification est déclaré comme analyse exploratoire"
+  ]
+}

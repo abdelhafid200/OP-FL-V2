@@ -1,0 +1,66 @@
+{
+  "fingerprint": "fe4582783af91509",
+  "protocol_hash": "0f91266774f979f1",
+  "n_features": 225,
+  "kinds": {
+    "bin": 76,
+    "cont": 149
+  },
+  "dx_top": [
+    "Sepsis, pulmonary",
+    "Infarction, acute myocardial (MI)",
+    "CABG alone, coronary artery bypass grafting",
+    "CVA, cerebrovascular accident/stroke",
+    "CHF, congestive heart failure",
+    "Sepsis, renal/UTI (including bladder)",
+    "Cardiac arrest (with or without respiratory arrest; for respiratory arrest see Respiratory System)",
+    "Emphysema/bronchitis",
+    "Aortic valve replacement (isolated)",
+    "Bleeding, upper GI",
+    "Pneumonia, bacterial",
+    "Sepsis, GI",
+    "Rhythm disturbance (atrial, supraventricular)",
+    "Diabetic ketoacidosis",
+    "Sepsis, unknown",
+    "Hemorrhage/hematoma, intracranial",
+    "Seizures (primary-no structural brain disease)",
+    "Head only trauma",
+    "Sepsis, cutaneous/soft tissue",
+    "Renal failure, acute"
+  ],
+  "unit_levels": [
+    "CCU-CTICU",
+    "CSICU",
+    "CTICU",
+    "Cardiac ICU",
+    "MICU",
+    "Med-Surg ICU",
+    "Neuro ICU",
+    "SICU"
+  ],
+  "admit_groups": {
+    "Emergency Department": "urgences",
+    "Chest Pain Center": "urgences",
+    "Operating Room": "bloc",
+    "Recovery Room": "bloc",
+    "PACU": "bloc",
+    "Floor": "service",
+    "Acute Care/Floor": "service",
+    "Step-Down Unit (SDU)": "service",
+    "ICU to SDU": "service",
+    "Observation": "service",
+    "Direct Admit": "admission_directe",
+    "Other Hospital": "autre_hopital",
+    "Other ICU": "autre_rea",
+    "ICU": "autre_rea"
+  },
+  "temporal_stats": [
+    "mean",
+    "min",
+    "max",
+    "last",
+    "n_obs",
+    "observed"
+  ],
+  "written_at": "2026-10-26T14:03:05"
+}

@@ -1,0 +1,30 @@
+{
+  "present_min": 2880,
+  "aki_end": 10080,
+  "aki_ratio": 2.0,
+  "lac_end": 4320,
+  "lac_thr": 4.0,
+  "policies_h": {
+    "creatinine": [
+      12,
+      24,
+      48,
+      72
+    ],
+    "lactate": [
+      12,
+      24,
+      48
+    ]
+  },
+  "n_rep": 20,
+  "criteria": {
+    "C1_tau": 0.25,
+    "C1_p": 0.001,
+    "C2_auroc": 0.65,
+    "C3_drop": 0.1,
+    "C4_rho": 0.3,
+    "C4_p": 0.05
+  },
+  "protocol_hash": "d92099ea7c11d517"
+}

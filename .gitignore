@@ -1,0 +1,79 @@
+# Environnements Python et caches
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Notebooks : fichiers temporaires, pas les notebooks sources
+.ipynb_checkpoints/
+notebooks/Untitled.ipynb
+
+# Anciennes versions et rapports obsolètes
+docs/archives/
+
+# Fichiers locaux, secrets et fichiers temporaires
+.env
+.env.*
+!.env.example
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archives et artefacts de modèles
+*.zip
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# Formats de données volumineux ou dérivés
+*.parquet
+*.npz
+*.feather
+*.arrow
+*.h5
+*.hdf5
+
+# Données OP-FL : conserver uniquement les métadonnées et le protocole public.
+data_v1/*
+!data_v1/DATA_CARD.md
+!data_v1/features.json
+!data_v1/splits/
+data_v1/splits/*
+!data_v1/splits/protocol.json
+
+# Données TDT-FL : conserver les métadonnées descriptives et le protocole.
+data_tdtfl/*
+!data_tdtfl/DATA_CARD_TDTFL.md
+!data_tdtfl/protocol_tdtfl.json
+!data_tdtfl/feature_info.json
+!data_tdtfl/feature_meta.csv
+!data_tdtfl/phenotype_map.csv
+
+# Résultats calculés : garder les rapports agrégés, figures et spécifications,
+# mais exclure prédictions, historiques, tableaux intermédiaires et données patient.
+results/**
+!results/**/
+!results/**/*.md
+!results/**/config.json
+!results/**/specification_gelee.json
+!results/**/amendement_1.json
+!results/**/figures/*.png
+!results/**/figures/*.pdf
+!results/**/figures/*.svg
+
+# Sorties de calcul, prédictions et modèles entraînés
+outputs/
+models/
+checkpoints/

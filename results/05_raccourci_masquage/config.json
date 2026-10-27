@@ -1,0 +1,175 @@
+{
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "seeds": [
+    11,
+    22,
+    33,
+    44,
+    55
+  ],
+  "cfg": {
+    "rounds": 30,
+    "client_frac": 0.5,
+    "local_epochs": 1,
+    "lr": 0.001,
+    "batch_size": 64,
+    "hidden": 64,
+    "head": 32,
+    "dropout": 0.1,
+    "grad_clip": 1.0
+  },
+  "configs": {
+    "A_lac_neg_x_only": {
+      "exp": "A",
+      "label": "lac",
+      "regime": "neg",
+      "model": "x_only"
+    },
+    "A_lac_neg_x_obs": {
+      "exp": "A",
+      "label": "lac",
+      "regime": "neg",
+      "model": "x_obs"
+    },
+    "A_lac_neg_obs_only": {
+      "exp": "A",
+      "label": "lac",
+      "regime": "neg",
+      "model": "obs_only"
+    },
+    "A_lac_cc_x_only": {
+      "exp": "A",
+      "label": "lac",
+      "regime": "cc",
+      "model": "x_only"
+    },
+    "A_lac_cc_x_obs": {
+      "exp": "A",
+      "label": "lac",
+      "regime": "cc",
+      "model": "x_obs"
+    },
+    "A_lac_cc_obs_only": {
+      "exp": "A",
+      "label": "lac",
+      "regime": "cc",
+      "model": "obs_only"
+    },
+    "A_aki_neg_x_only": {
+      "exp": "A",
+      "label": "aki",
+      "regime": "neg",
+      "model": "x_only"
+    },
+    "A_aki_neg_x_obs": {
+      "exp": "A",
+      "label": "aki",
+      "regime": "neg",
+      "model": "x_obs"
+    },
+    "A_aki_neg_obs_only": {
+      "exp": "A",
+      "label": "aki",
+      "regime": "neg",
+      "model": "obs_only"
+    },
+    "B_ref_neg_x_only": {
+      "exp": "B",
+      "label": "lac",
+      "regime": "neg",
+      "model": "x_only",
+      "scenario": "ref"
+    },
+    "B_ref_neg_x_obs": {
+      "exp": "B",
+      "label": "lac",
+      "regime": "neg",
+      "model": "x_obs",
+      "scenario": "ref"
+    },
+    "B_ref_cc_x_only": {
+      "exp": "B",
+      "label": "lac",
+      "regime": "cc",
+      "model": "x_only",
+      "scenario": "ref"
+    },
+    "B_ref_cc_x_obs": {
+      "exp": "B",
+      "label": "lac",
+      "regime": "cc",
+      "model": "x_obs",
+      "scenario": "ref"
+    },
+    "B_mid_neg_x_only": {
+      "exp": "B",
+      "label": "lac",
+      "regime": "neg",
+      "model": "x_only",
+      "scenario": "mid"
+    },
+    "B_mid_neg_x_obs": {
+      "exp": "B",
+      "label": "lac",
+      "regime": "neg",
+      "model": "x_obs",
+      "scenario": "mid"
+    },
+    "B_mid_cc_x_only": {
+      "exp": "B",
+      "label": "lac",
+      "regime": "cc",
+      "model": "x_only",
+      "scenario": "mid"
+    },
+    "B_mid_cc_x_obs": {
+      "exp": "B",
+      "label": "lac",
+      "regime": "cc",
+      "model": "x_obs",
+      "scenario": "mid"
+    },
+    "B_low_neg_x_only": {
+      "exp": "B",
+      "label": "lac",
+      "regime": "neg",
+      "model": "x_only",
+      "scenario": "low"
+    },
+    "B_low_neg_x_obs": {
+      "exp": "B",
+      "label": "lac",
+      "regime": "neg",
+      "model": "x_obs",
+      "scenario": "low"
+    },
+    "B_low_cc_x_only": {
+      "exp": "B",
+      "label": "lac",
+      "regime": "cc",
+      "model": "x_only",
+      "scenario": "low"
+    },
+    "B_low_cc_x_obs": {
+      "exp": "B",
+      "label": "lac",
+      "regime": "cc",
+      "model": "x_obs",
+      "scenario": "low"
+    }
+  },
+  "n_boot": 1000,
+  "criteria": {
+    "B1_drop": -0.02,
+    "B3_margin": -0.01
+  },
+  "lac_thr": 4.0,
+  "lac_end": 4320,
+  "protocol_hash": "d92099ea7c11d517"
+}

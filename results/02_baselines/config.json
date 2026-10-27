@@ -1,0 +1,34 @@
+{
+  "task": "mortality",
+  "models": [
+    "x_only",
+    "obs_only",
+    "x_obs",
+    "grud"
+  ],
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "cfg": {
+    "rounds": 30,
+    "client_frac": 0.5,
+    "local_epochs": 1,
+    "lr": 0.001,
+    "batch_size": 64,
+    "hidden": 64,
+    "head": 32,
+    "dropout": 0.1,
+    "grad_clip": 1.0
+  },
+  "protocol_hash": "d92099ea7c11d517",
+  "min_events_hosp": 5
+}

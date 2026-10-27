@@ -1,0 +1,323 @@
+{
+  "document": "Amendement 1 à la spécification gelée OP-Cal (06c)",
+  "statut": "proposé (à valider avant dépôt)",
+  "validation": {
+    "valide": false,
+    "par": "",
+    "date": ""
+  },
+  "date": "2026-10-27T10:54:14",
+  "protocol_hash": "d92099ea7c11d517",
+  "specification": {
+    "fichier": "results/06c_robustesse_opcal/specification_gelee.json",
+    "sha256": "302a9b448a1adcf481802ce6827e95e8c9afb623c3b7cf39ac3ca9f9eead25ae",
+    "date": "2026-10-26T18:32:44",
+    "modifiee": false
+  },
+  "acces_au_test_verrouille": "aucun label, aucune prédiction, aucun descripteur ; seuls n_val et n_test du manifest (déjà lus au 06c pour fixer k)",
+  "motif": "Puissance insuffisante du C1 gelé : 0.31 sous les estimations du développement (variance d'échantillonnage médiane de a_h ≈ 0.169 (environ 7 décès attendus par hôpital verrouillé) contre τ² ≈ 0.081 entre hôpitaux de développement). Simulation sur les vrais effectifs, avec la procédure finale (tableau 'puissance'). L'amendement précise aussi l'estimand, le lien avec l'amélioration de la calibration (b > 1/2) et le contrôle de la multiplicité.",
+  "modifications": [
+    {
+      "critere": "C1",
+      "avant": "R²_τ sur les 96 hôpitaux verrouillés, et gain |CITL|(E1) − |CITL|(OP-Cal) ; R²_τ ≥ 0,25 et borne basse de l'IC du gain > 0 (bootstrap des hôpitaux, 2000 tirages)",
+      "apres": "remplacé par C1a (famille 1, principal) et C1b (famille 2) ; R²_τ et gains en |CITL| rapportés comme estimations"
+    },
+    {
+      "critere": "C2",
+      "avant": "|CITL|(E0_aucune) − |CITL|(OP-Cal) ; borne basse de l'IC > 0",
+      "apres": "gain de log-vraisemblance par patient contre E0 (famille 2) ; |CITL| contre E0 et E1 descriptifs"
+    },
+    {
+      "critere": "C3",
+      "avant": "k = 25 : meilleur comparateur simple (local ou rétrécissement fixe) − EB avec a priori OP-Cal ; borne basse de l'IC > 0",
+      "apres": "descriptif (puissance au test verrouillé 0.17 sous les estimations du développement ; preuve principale du régime 2 : 06b, F2)"
+    },
+    {
+      "critere": "C4",
+      "avant": "γ (log du taux de dosage, offset du score) ; IC à 95 % exclut 0",
+      "apres": "inchangé sur le fond ; test et IC précisés ; on rapporte aussi si l'IC contient 1"
+    },
+    {
+      "critere": "S1",
+      "avant": "comme C1 ; secondaire, descriptif",
+      "apres": "GRU-D : C1a et C1b, descriptifs"
+    }
+  ],
+  "estimand_principal": "b dans a_h = alpha + b·(â_h − moyenne de â) + u_h + e_h, u_h ~ N(0, tau_r²), e_h ~ N(0, v_h). À moyenne correcte, l'erreur quadratique de calibration baisse de (2b − 1)·Var(â) par rapport à la meilleure constante.",
+  "definitions": {
+    "a_h": "CITL (offset logistique, cible bornée à [0,5 ; n − 0,5]) du modèle final x_only sur les patients val + test de l'hôpital verrouillé h",
+    "v_h": "1 / Σ μ(1 − μ), μ = sigmoid(lp + a_h)",
+    "â_h": "prédiction de opcal_feas.SiteEB ajusté une fois sur les 60 hôpitaux de développement (descripteurs gelés), covariable fixe",
+    "E0": "aucune correction du modèle final (décalage 0)",
+    "E1": "décalage constant = moyenne REML des a_h croisés des hôpitaux de développement",
+    "z_h": "log de la part des séjours présents à 48 h redosés en lactate après 24 h, split train de l'hôpital verrouillé",
+    "population_C4": "séjours présents à 48 h, patients val + test des hôpitaux verrouillés, label hyperlactatémie (non dosé = négatif) du notebook 04"
+  },
+  "criteres": [
+    {
+      "code": "C1a",
+      "famille": 1,
+      "H1": "b > 0",
+      "test": "REML, Knapp-Hartung sans troncature, t à k − 2 ddl, unilatéral 2,5 %"
+    },
+    {
+      "code": "C4",
+      "famille": 1,
+      "H1": "γ > 0",
+      "test": "logistique avec offset lp, γ sur z_h centré ; bootstrap de 2000 hôpitaux (graine 2026) ; p = (1 + #{γ* ≤ 0}) / 2001"
+    },
+    {
+      "code": "C1b",
+      "famille": 2,
+      "H1": "b > 0,5",
+      "test": "comme C1a, H0 : b ≤ 0,5"
+    },
+    {
+      "code": "C2",
+      "famille": 2,
+      "H1": "Δℓ > 0",
+      "test": "Δℓ = Σ_h Σ_i [ℓ(lp_i + â_h) − ℓ(lp_i)] / Σ_h n_h ; bootstrap de 2000 hôpitaux (graine 2026) ; p = (1 + #{Δℓ* ≤ 0}) / 2001"
+    }
+  ],
+  "multiplicite": "famille 1 = {C1a, C4} par Holm (plus petit p ≤ 0,0125, second ≤ 0,025) ; famille 2 testée seulement si la famille 1 est entièrement rejetée, en séquence fixe C1b puis C2, chacun à 0,025 (gatekeeping séquentiel, unilatéral 2,5 %)",
+  "regles": [
+    "aucun hôpital verrouillé exclu",
+    "modèles finaux : réglages du notebook 02, entraînés sur les 60 hôpitaux de développement, prédictions moyennées sur les seeds",
+    "indépendance : patients distincts entre hôpitaux ; â_h fixes ; erreur commune du modèle final absorbée par alpha",
+    "le test verrouillé est évalué une seule fois ; tout écart est déclaré comme analyse exploratoire"
+  ],
+  "toujours_rapportes": [
+    "alpha, b et R²_τ avec IC",
+    "bootstrap de b (2000 hôpitaux, tau² réestimé)",
+    "|CITL| et log-vraisemblance contre E0 et E1",
+    "EM et BBSE",
+    "GRU-D",
+    "S_mech_fixe (lactate)",
+    "C3 (k labels) descriptif"
+  ],
+  "formulation_des_conclusions": {
+    "C1a seul": "le signal de calibration des sites se transporte ; l'ampleur du gain reste incertaine",
+    "C1b": "amélioration de la calibration confirmée",
+    "C2": "gain de vraisemblance confirmé contre l'absence de correction",
+    "échec": "rapporté tel quel"
+  },
+  "pente_developpement": [
+    {
+      "schéma": "plis du protocole",
+      "b": 1.1619318303255146,
+      "b_IC_bas": 0.7722684842333594,
+      "b_IC_haut": 1.5515951764176699,
+      "alpha": 0.05529517477459411,
+      "p_C1a": 7.668693286185976e-08,
+      "p_C1b": 0.0006118216991248222,
+      "R2_tau": 0.607725189858977,
+      "var_ahat": 0.041981377495804925
+    },
+    {
+      "schéma": "leave-one-hospital-out",
+      "b": 0.9681153074971228,
+      "b_IC_bas": 0.6275258325999595,
+      "b_IC_haut": 1.3087047823942861,
+      "alpha": 0.056804526157799955,
+      "p_C1a": 2.199090732094527e-07,
+      "p_C1b": 0.003954419184294267,
+      "R2_tau": 0.5556515278725551,
+      "var_ahat": 0.057115840388251016
+    },
+    {
+      "schéma": "50 partitions (médiane)",
+      "b": 0.9159919087723218,
+      "b_IC_bas": 0.7560626617831243,
+      "b_IC_haut": 1.085124616528466,
+      "alpha": 0.057697768764991116,
+      "p_C1a": 1.3495422100274569e-05,
+      "p_C1b": 0.023835895941859205,
+      "R2_tau": 0.39898132309137346,
+      "var_ahat": 0.0470092634954324
+    }
+  ],
+  "puissance": [
+    {
+      "scénario": "nul : b = 0",
+      "b": 0.0,
+      "tau2": 0.08116270506213567,
+      "C4 simulé avec": "γ = 0 (nul)",
+      "contrainte_tau2": false,
+      "C1_gele": 0.0,
+      "C3_gele": 0.006,
+      "C1a_seul": 0.024,
+      "C1b_seul": 0.0,
+      "C2_seul": 0.0,
+      "C4_seul": 0.04666666666666667,
+      "famille1": 0.002,
+      "C1b_confirme": 0.0,
+      "C2_confirme": 0.0,
+      "b_estime_median": 0.007773001218723083,
+      "largeur_IC_mediane": 0.9814693230251522,
+      "R2_tau_median": -0.8443082287948218
+    },
+    {
+      "scénario": "frontière C1b : b = 0,5",
+      "b": 0.5,
+      "tau2": 0.08116270506213567,
+      "C4 simulé avec": "γ du dév.",
+      "contrainte_tau2": false,
+      "C1_gele": 0.02,
+      "C3_gele": 0.018,
+      "C1a_seul": 0.432,
+      "C1b_seul": 0.016,
+      "C2_seul": 0.018,
+      "C4_seul": 0.9866666666666667,
+      "famille1": 0.426,
+      "C1b_confirme": 0.016,
+      "C2_confirme": 0.01,
+      "b_estime_median": 0.445181418493818,
+      "largeur_IC_mediane": 0.978580529433542,
+      "R2_tau_median": -0.07919470962883846
+    },
+    {
+      "scénario": "b = 0,8",
+      "b": 0.8,
+      "tau2": 0.08116270506213567,
+      "C4 simulé avec": "γ du dév.",
+      "contrainte_tau2": false,
+      "C1_gele": 0.2,
+      "C3_gele": 0.104,
+      "C1a_seul": 0.874,
+      "C1b_seul": 0.186,
+      "C2_seul": 0.222,
+      "C4_seul": 0.9866666666666667,
+      "famille1": 0.854,
+      "C1b_confirme": 0.184,
+      "C2_confirme": 0.162,
+      "b_estime_median": 0.7412528491318837,
+      "largeur_IC_mediane": 0.9368052847221446,
+      "R2_tau_median": 0.40741771106816954
+    },
+    {
+      "scénario": "b = 1",
+      "b": 1.0,
+      "tau2": 0.08116270506213567,
+      "C4 simulé avec": "γ du dév.",
+      "contrainte_tau2": false,
+      "C1_gele": 0.398,
+      "C3_gele": 0.23,
+      "C1a_seul": 0.972,
+      "C1b_seul": 0.498,
+      "C2_seul": 0.562,
+      "C4_seul": 0.9866666666666667,
+      "famille1": 0.962,
+      "C1b_confirme": 0.492,
+      "C2_confirme": 0.448,
+      "b_estime_median": 0.9558167494251937,
+      "largeur_IC_mediane": 0.8945034536815677,
+      "R2_tau_median": 0.7178350199979645
+    },
+    {
+      "scénario": "b du dév.",
+      "b": 0.9159919087723218,
+      "tau2": 0.08116270506213567,
+      "C4 simulé avec": "γ du dév.",
+      "contrainte_tau2": false,
+      "C1_gele": 0.314,
+      "C3_gele": 0.172,
+      "C1a_seul": 0.954,
+      "C1b_seul": 0.336,
+      "C2_seul": 0.392,
+      "C4_seul": 0.9866666666666667,
+      "famille1": 0.94,
+      "C1b_confirme": 0.334,
+      "C2_confirme": 0.302,
+      "b_estime_median": 0.8788787397982022,
+      "largeur_IC_mediane": 0.925829825674278,
+      "R2_tau_median": 0.5788074982388338
+    },
+    {
+      "scénario": "b = 0,8 ; τ² = 0,12",
+      "b": 0.8,
+      "tau2": 0.12,
+      "C4 simulé avec": "γ du dév.",
+      "contrainte_tau2": false,
+      "C1_gele": 0.158,
+      "C3_gele": 0.112,
+      "C1a_seul": 0.818,
+      "C1b_seul": 0.174,
+      "C2_seul": 0.24,
+      "C4_seul": 0.9866666666666667,
+      "famille1": 0.81,
+      "C1b_confirme": 0.172,
+      "C2_confirme": 0.16,
+      "b_estime_median": 0.7599511604141591,
+      "largeur_IC_mediane": 1.003037305821127,
+      "R2_tau_median": 0.26059718139821986
+    },
+    {
+      "scénario": "b = 1 ; τ² = 0,12",
+      "b": 1.0,
+      "tau2": 0.12,
+      "C4 simulé avec": "γ du dév.",
+      "contrainte_tau2": false,
+      "C1_gele": 0.38,
+      "C3_gele": 0.184,
+      "C1a_seul": 0.968,
+      "C1b_seul": 0.41,
+      "C2_seul": 0.484,
+      "C4_seul": 0.9866666666666667,
+      "famille1": 0.956,
+      "C1b_confirme": 0.408,
+      "C2_confirme": 0.394,
+      "b_estime_median": 0.9207527795008605,
+      "largeur_IC_mediane": 0.9798809918395195,
+      "R2_tau_median": 0.46978186734960775
+    },
+    {
+      "scénario": "b du dév. ; τ² = 0,12",
+      "b": 0.9159919087723218,
+      "tau2": 0.12,
+      "C4 simulé avec": "γ du dév.",
+      "contrainte_tau2": false,
+      "C1_gele": 0.27,
+      "C3_gele": 0.152,
+      "C1a_seul": 0.934,
+      "C1b_seul": 0.288,
+      "C2_seul": 0.358,
+      "C4_seul": 0.9866666666666667,
+      "famille1": 0.918,
+      "C1b_confirme": 0.284,
+      "C2_confirme": 0.254,
+      "b_estime_median": 0.8534724991683322,
+      "largeur_IC_mediane": 0.9961842799568605,
+      "R2_tau_median": 0.3582633437107263
+    }
+  ],
+  "puissance_C4": [
+    {
+      "scénario": "γ = 0 (nul)",
+      "C4 (p ≤ 2,5 %)": 0.04666666666666667,
+      "γ estimé médian": -0.023982955864278708,
+      "événements médians": 103.5
+    },
+    {
+      "scénario": "γ = 0,5",
+      "C4 (p ≤ 2,5 %)": 0.7266666666666667,
+      "γ estimé médian": 0.4566982389620303,
+      "événements médians": 107.0
+    },
+    {
+      "scénario": "γ du dév.",
+      "C4 (p ≤ 2,5 %)": 0.9866666666666667,
+      "γ estimé médian": 0.9341439201144234,
+      "événements médians": 118.0
+    }
+  ],
+  "erreur_type_I": {
+    "C1a sous b = 0": 0.024,
+    "C1b sous b = 0,5": 0.016,
+    "C4 sous γ = 0": 0.04666666666666667
+  },
+  "code_sha256": {
+    "opcal_feas.py": "9770a8614e7599eec47e725512db3f7e8a9d7488df8dd2d70a3667e6a4d80d48",
+    "opcal_robust.py": "eaa1313c3521df86b66feb0040c0d2152b8660bf0413478efed4d48fcd5d6201",
+    "opcal_amend.py": "b7a16ab9572f90e10b0a0873779bdde58baa449f0babc1764e2c99e174e959b2"
+  }
+}
