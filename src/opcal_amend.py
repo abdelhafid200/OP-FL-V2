@@ -6,13 +6,13 @@ Les fonctions de test sont celles que le notebook 07 appliquera au test verrouil
 puissance les appelle telles quelles, pour que puissance et analyse finale suivent la même procédure.
 
 Tous les tests sont unilatéraux au seuil 2,5 % (équivalent à un IC bilatéral à 95 %).
-  C1a : b > 0      (le signal de calibration des sites se transporte)
-  C1b : b > 0,5    (amélioration : à moyenne correcte, l'erreur quadratique de calibration baisse de
-                    (2b − 1)·Var(â) par rapport à la meilleure constante)
-  C4  : γ > 0      (mécanisme Y* = D × Y : effet du log du taux de dosage, à score égal)
-  C2  : Δℓ > 0     (gain de log-vraisemblance par patient d'OP-Cal par rapport à E0, aucune correction)
-Famille 1 = {C1a, C4} (Holm) ; famille 2 = C1b puis C2 (séquence fixe), testée seulement si toute la
-famille 1 est rejetée (gatekeeping séquentiel : risque global d'erreur contrôlé à 2,5 % unilatéral).
+  C1a : b > 0      (le signal de calibration des sites se transporte) — affirmation principale
+  C1b : b > 0,5    (sous le modèle linéaire et à moyenne correcte, l'erreur quadratique de calibration baisse de
+                    (2b − 1)·Var(â) par rapport à la meilleure constante, qui est une référence théorique)
+  C2  : Δℓ > 0     (gain de log-vraisemblance par patient d'OP-Cal contre E0, aucune correction ; comparaison
+                    distincte de C1b : elle inclut aussi le décalage moyen)
+  C4  : U > 0      (mécanisme Y* = D × Y : test exact par permutation du score du log du taux de dosage)
+Multiplicité : procédure graphique (Bretz et al. 2009), voir GRAPH_WEIGHTS et GRAPH_EDGES.
 """
 import numpy as np
 import pandas as pd
@@ -116,14 +116,35 @@ def ratio_boot(num, den, n_boot=2000, seed=0):
 
 
 # ----------------------------------------------------------------------------------------------
-# C4 : γ (log du taux de dosage), régression logistique avec offset, bootstrap des hôpitaux
+# C4 : test exact par permutation (statistique du score) ; γ estimé à part (descriptif)
 # ----------------------------------------------------------------------------------------------
 
-def gamma_test(stays, z_by_h, n_boot=2000, seed=0):
-    """logit P(Y* = 1) = lp + alpha + γ·(z_h − moyenne) ; IC percentile et p unilatéral (H0 : γ ≤ 0)."""
+def _o_minus_e(stays, z_by_h):
+    """O_h − E_h par hôpital sous le modèle nul logit P(Y* = 1) = lp + alpha (alpha commun, MLE avec offset)."""
     s = stays[stays["hospitalid"].isin(z_by_h.dropna().index)]
-    z = s["hospitalid"].map(z_by_h).to_numpy(float)
-    z = z - np.mean(z_by_h.dropna())
+    lp, y = s["lp"].to_numpy(), s["y"].to_numpy(float)
+    alpha = oc.offset_fit(lp, y)[0]
+    oe = pd.Series(y - oc.sigmoid(lp + alpha)).groupby(s["hospitalid"].to_numpy()).sum()
+    return oe, z_by_h.reindex(oe.index).to_numpy(float)
+
+
+def gamma_score_test(stays, z_by_h, n_perm=2000, seed=0):
+    """C4 : U = Σ_h (z_h − z̄)·(O_h − E_h). « Les hôpitaux qui dosent plus ont plus d'événements enregistrés que prévu. »
+    p = (1 + #{U* ≥ U}) / (B + 1), z permuté entre hôpitaux : test exact si le taux de dosage est indépendant des
+    écarts O − E sous H0, quel que soit le nombre d'événements par hôpital."""
+    oe, z = _o_minus_e(stays, z_by_h)
+    R, zc = oe.to_numpy(), z - z.mean()
+    U = float(zc @ R)
+    rng = np.random.default_rng(seed)
+    perms = np.argsort(rng.random((n_perm, len(zc))), axis=1)
+    Ustar = zc[perms] @ R
+    return {"U": U, "p_C4": float((1 + np.sum(Ustar >= U)) / (n_perm + 1)), "hopitaux": len(zc)}
+
+
+def gamma_estimate(stays, z_by_h, n_boot=2000, seed=0):
+    """γ (logistique avec offset lp, z centré) et IC percentile par bootstrap des hôpitaux : estimation, pas test."""
+    s = stays[stays["hospitalid"].isin(z_by_h.dropna().index)]
+    z = s["hospitalid"].map(z_by_h).to_numpy(float) - np.mean(z_by_h.dropna())
     g = s["hospitalid"].to_numpy()
     lp, y = s["lp"].to_numpy(), s["y"].to_numpy(float)
     est = oc.offset_slope_fit(lp, y, z)[1]
@@ -134,31 +155,48 @@ def gamma_test(stays, z_by_h, n_boot=2000, seed=0):
     for b in range(n_boot):
         i = np.concatenate([rows[h] for h in rng.choice(hs, len(hs))])
         bs[b] = oc.offset_slope_fit(lp[i], y[i], z[i])[1]
-    return {"gamma": float(est), "IC_bas": float(np.quantile(bs, 0.025)), "IC_haut": float(np.quantile(bs, 0.975)),
-            "p_C4": float((1 + np.sum(bs <= 0)) / (n_boot + 1)), "IC_contient_1": bool(np.quantile(bs, 0.025) <= 1 <= np.quantile(bs, 0.975))}
+    lo, hi = float(np.quantile(bs, 0.025)), float(np.quantile(bs, 0.975))
+    return {"gamma": float(est), "IC_bas": lo, "IC_haut": hi, "IC_contient_1": bool(lo <= 1 <= hi)}
 
 
 # ----------------------------------------------------------------------------------------------
-# Décision : Holm (famille 1), puis séquence fixe (famille 2)
+# Multiplicité : procédure graphique (Bretz, Maurer, Brannath et Posch 2009), unilatérale à 2,5 %
+#   poids initiaux : C1a 1/2, C4 1/2 ; arêtes C4 → C1a, C1a → C1b, C1b → C2, C2 → C4 (poids 1).
+#   Les conclusions de mortalité ne dépendent pas de C4 : si C4 échoue, C1a, C1b et C2 sont testés à 1,25 % ;
+#   si C4 est rejeté, son seuil passe à C1a (2,5 %). Contrôle fort du risque global d'erreur (Bonferroni pondéré).
 # ----------------------------------------------------------------------------------------------
 
-def decide(p_C1a, p_C4, p_C1b, p_C2, alpha=ALPHA):
-    ps = sorted([("C1a", p_C1a), ("C4", p_C4)], key=lambda t: t[1])
-    rej = {"C1a": False, "C4": False, "C1b": False, "C2": False}
-    if ps[0][1] <= alpha / 2:
-        rej[ps[0][0]] = True
-        if ps[1][1] <= alpha:
-            rej[ps[1][0]] = True
-    if rej["C1a"] and rej["C4"]:
-        if p_C1b <= alpha:
-            rej["C1b"] = True
-            if p_C2 <= alpha:
-                rej["C2"] = True
-    return rej
+GRAPH_WEIGHTS = {"C1a": 0.5, "C4": 0.5, "C1b": 0.0, "C2": 0.0}
+GRAPH_EDGES = {("C4", "C1a"): 1.0, ("C1a", "C1b"): 1.0, ("C1b", "C2"): 1.0, ("C2", "C4"): 1.0}
+
+
+def graph_test(p, weights=GRAPH_WEIGHTS, edges=GRAPH_EDGES, alpha=ALPHA):
+    """Algorithme 1 de Bretz et al. (2009). p : dict hypothèse -> p unilatéral. Retourne dict hypothèse -> rejetée."""
+    H = list(weights)
+    w = dict(weights)
+    G = {(i, j): edges.get((i, j), 0.0) for i in H for j in H if i != j}
+    active, rej = set(H), {h: False for h in H}
+    while True:
+        cand = [h for h in active if w[h] > 0 and p[h] <= w[h] * alpha]
+        if not cand:
+            return rej
+        i = min(cand, key=lambda h: p[h])
+        rej[i] = True
+        active.discard(i)
+        for j in active:
+            w[j] += w[i] * G[(i, j)]
+        w[i] = 0.0
+        newG = {}
+        for j in active:
+            for k in active:
+                if j != k:
+                    d = 1.0 - G[(j, i)] * G[(i, j)]
+                    newG[(j, k)] = (G[(j, k)] + G[(j, i)] * G[(i, k)]) / d if d > 1e-12 else 0.0
+        G.update(newG)
 
 
 # ----------------------------------------------------------------------------------------------
-# Simulation de puissance (mêmes fonctions que l'analyse finale)
+# Simulation de puissance : mêmes fonctions et mêmes nombres de tirages que l'analyse finale
 # ----------------------------------------------------------------------------------------------
 
 def _sample_lp(pools, n, rng):
@@ -167,9 +205,10 @@ def _sample_lp(pools, n, rng):
     return pool[rng.integers(0, len(pool), n)]
 
 
-def simulate_mortality(n_eval, lp_pools, b, tau2, var_ahat, n_rep=500, n_boot_c2=400, seed=0, k_lab=25, n0_fixed=10.0):
+def simulate_mortality(n_eval, lp_pools, b, tau2, var_ahat, n_rep=500, n_boot=2000, seed=0, k_lab=25, n0_fixed=10.0):
     """Réplications du test verrouillé : â_h ~ N(0, var_ahat) (dispersion des prédictions du développement),
-    a_h = b·â_h + u_h avec Var(a_h) = tau2 (si b²·var_ahat ≤ tau2). Retourne p_C1a, p_C1b, p_C2, b estimé."""
+    a_h = b·â_h + u_h avec Var(a_h) = tau2 (si b²·var_ahat ≤ tau2). p de C1a, C1b (Knapp-Hartung), C2 (bootstrap
+    de n_boot hôpitaux, comme l'analyse finale), et puissance des C1 et C3 tels que gelés au 06c."""
     rng = np.random.default_rng(seed)
     K = len(n_eval)
     s2u = max(tau2 - b ** 2 * var_ahat, 1e-4)
@@ -178,7 +217,7 @@ def simulate_mortality(n_eval, lp_pools, b, tau2, var_ahat, n_rep=500, n_boot_c2
         ahat = rng.normal(0, np.sqrt(var_ahat), K)
         a = b * ahat + rng.normal(0, np.sqrt(s2u), K)
         c, v, gain = np.empty(K), np.empty(K), np.empty(K)
-        reg = np.full((K, 3), np.nan)      # C3 tel que gelé : |CITL| déploiement (local, rétrécissement fixe, EB OP-Cal)
+        reg = np.full((K, 3), np.nan)      # C3 gelé : |CITL| déploiement (local, rétrécissement fixe, EB OP-Cal)
         for h in range(K):
             lp = _sample_lp(lp_pools, int(n_eval[h]), rng)
             y = (rng.random(len(lp)) < oc.sigmoid(lp + a[h])).astype(float)
@@ -192,24 +231,24 @@ def simulate_mortality(n_eval, lp_pools, b, tau2, var_ahat, n_rep=500, n_boot_c2
                           res_(oc.offset_fit(lp[L], y[L], prior_mean=0.0, prior_var=1.0 / n0_fixed)[0]),
                           res_(oc.offset_fit(lp[L], y[L], prior_mean=ahat[h], prior_var=s2u + 1e-3)[0]))
         res = reml_metareg(c, ahat - ahat.mean(), v)
-        _, _, _, p2 = ratio_boot(gain, n_eval, n_boot_c2, int(rng.integers(1e9)))
-        # C1 tel que gelé au 06c : R²_τ ≥ 0,25 et borne basse de l'IC du gain |CITL|(E1) − |CITL|(OP-Cal) > 0
+        _, _, _, p2 = ratio_boot(gain, n_eval, n_boot, int(rng.integers(1e9)))
         t_raw = oc.random_effects(c, v)["tau2"]
         r2 = 1 - oc.random_effects(c - ahat, v)["tau2"] / t_raw if t_raw > 0 else np.nan
-        diff = np.abs(c) - np.abs(c - ahat)          # E1 = moyenne vraie, nulle dans la simulation
-        bs = diff[rng.integers(0, K, (n_boot_c2, K))].mean(1)
+        diff = np.abs(c) - np.abs(c - ahat)          # C1 gelé : E1 = moyenne vraie (nulle dans la simulation)
+        bs = diff[rng.integers(0, K, (n_boot, K))].mean(1)
         ok = np.isfinite(reg[:, 0])
         comp = 0 if np.nanmean(reg[:, 0]) <= np.nanmean(reg[:, 1]) else 1
         d3 = reg[ok, comp] - reg[ok, 2]
-        c3 = bool(ok.sum() > 2 and np.quantile(d3[rng.integers(0, ok.sum(), (n_boot_c2, ok.sum()))].mean(1), 0.025) > 0)
+        c3 = bool(ok.sum() > 2 and np.quantile(d3[rng.integers(0, ok.sum(), (n_boot, ok.sum()))].mean(1), 0.025) > 0)
         out.append({"rep": r, "b_est": res["b"], "p_C1a": p_slope(res, 0.0), "p_C1b": p_slope(res, 0.5), "p_C2": p2, "C3_gele": c3,
                     "C1_gele": bool(np.isfinite(r2) and r2 >= 0.25 and np.quantile(bs, 0.025) > 0), "R2_tau": r2,
                     "largeur_IC": 2 * stats.t.ppf(0.975, res["df"]) * res["se_b"]})
     return pd.DataFrame(out)
 
 
-def simulate_gamma(n_eval48, lp_pools, z_pool, gamma, tau2_resid, n_rep=150, n_boot=300, seed=0):
-    """Réplications de C4 : z_h tiré parmi les log taux de dosage du développement ; Y* ~ lp + γ·(z − z̄) + u_h."""
+def simulate_gamma(n_eval48, lp_pools, z_pool, gamma, tau2_resid, n_rep=500, n_perm=2000, seed=0):
+    """Réplications de C4 : z_h tiré parmi les log taux de dosage du développement ; Y* ~ lp + γ·(z − z̄) + u_h.
+    Test exact par permutation (n_perm, comme l'analyse finale) ; γ estimé par MLE (sans bootstrap)."""
     rng = np.random.default_rng(seed)
     K = len(n_eval48)
     out = []
@@ -222,21 +261,40 @@ def simulate_gamma(n_eval48, lp_pools, z_pool, gamma, tau2_resid, n_rep=150, n_b
             y = (rng.random(len(lp)) < oc.sigmoid(lp + gamma * (z[h] - z.mean()) + u[h])).astype(float)
             parts.append(pd.DataFrame({"hospitalid": h, "lp": lp, "y": y}))
         st = pd.concat(parts, ignore_index=True)
-        t = gamma_test(st, pd.Series(z, index=range(K)), n_boot, int(rng.integers(1e9)))
-        out.append({"rep": r, "gamma_est": t["gamma"], "p_C4": t["p_C4"], "evenements": int(st["y"].sum())})
+        zs = pd.Series(z, index=range(K))
+        t = gamma_score_test(st, zs, n_perm, int(rng.integers(1e9)))
+        g_est = oc.offset_slope_fit(st["lp"].to_numpy(), st["y"].to_numpy(float),
+                                    st["hospitalid"].map(zs).to_numpy(float) - z.mean())[1]
+        out.append({"rep": r, "gamma_est": g_est, "p_C4": t["p_C4"], "evenements": int(st["y"].sum())})
     return pd.DataFrame(out)
 
 
-def power_table(sim_m, sim_g, alpha=ALPHA, seed=0):
-    """Puissance de chaque critère et de la procédure complète (réplications de mortalité appariées au hasard
-    avec des réplications de C4, indépendantes)."""
+def mc_ci(k, n, level=0.95):
+    """IC exact (Clopper-Pearson) d'une proportion de Monte Carlo."""
+    a = (1 - level) / 2
+    lo = stats.beta.ppf(a, k, n - k + 1) if k > 0 else 0.0
+    hi = stats.beta.ppf(1 - a, k + 1, n - k) if k < n else 1.0
+    return float(lo), float(hi)
+
+
+def procedure_table(sim_m, sim_g, true_null=(), alpha=ALPHA, seed=0):
+    """Procédure complète (graphe) sur des réplications de mortalité appariées au hasard avec des réplications de C4
+    (indépendantes). Puissance de chaque hypothèse, puissance de chaque test seul, et proportion de réplications avec
+    au moins un rejet à tort parmi `true_null` (risque global d'erreur, IC de Clopper-Pearson)."""
     rng = np.random.default_rng(seed)
     pg = sim_g["p_C4"].to_numpy()[rng.integers(0, len(sim_g), len(sim_m))]
-    dec = [decide(a, g, b, c, alpha) for a, g, b, c in zip(sim_m["p_C1a"], pg, sim_m["p_C1b"], sim_m["p_C2"])]
-    return {"C1_gele": float(np.mean(sim_m["C1_gele"])), "C3_gele": float(np.mean(sim_m["C3_gele"])),
-            "C1a_seul": float(np.mean(sim_m["p_C1a"] <= alpha)), "C1b_seul": float(np.mean(sim_m["p_C1b"] <= alpha)),
-            "C2_seul": float(np.mean(sim_m["p_C2"] <= alpha)), "C4_seul": float(np.mean(sim_g["p_C4"] <= alpha)),
-            "famille1": float(np.mean([d["C1a"] and d["C4"] for d in dec])),
-            "C1b_confirme": float(np.mean([d["C1b"] for d in dec])), "C2_confirme": float(np.mean([d["C2"] for d in dec])),
-            "b_estime_median": float(sim_m["b_est"].median()), "largeur_IC_mediane": float(sim_m["largeur_IC"].median()),
-            "R2_tau_median": float(np.nanmedian(sim_m["R2_tau"]))}
+    dec = [graph_test({"C1a": a, "C4": g, "C1b": b, "C2": c}, alpha=alpha)
+           for a, g, b, c in zip(sim_m["p_C1a"], pg, sim_m["p_C1b"], sim_m["p_C2"])]
+    n = len(dec)
+    out = {"C1_gele": float(np.mean(sim_m["C1_gele"])), "C3_gele": float(np.mean(sim_m["C3_gele"])),
+           "C1a_seul": float(np.mean(sim_m["p_C1a"] <= alpha)), "C1b_seul": float(np.mean(sim_m["p_C1b"] <= alpha)),
+           "C2_seul": float(np.mean(sim_m["p_C2"] <= alpha)), "C4_seul": float(np.mean(sim_g["p_C4"] <= alpha))}
+    for h in ("C1a", "C4", "C1b", "C2"):
+        out[f"{h}_confirme"] = float(np.mean([d[h] for d in dec]))
+    if true_null:
+        k = int(sum(any(d[h] for h in true_null) for d in dec))
+        out["erreur_globale"] = k / n
+        out["erreur_globale_IC_bas"], out["erreur_globale_IC_haut"] = mc_ci(k, n)
+    out.update({"b_estime_median": float(sim_m["b_est"].median()), "largeur_IC_mediane": float(sim_m["largeur_IC"].median()),
+                "R2_tau_median": float(np.nanmedian(sim_m["R2_tau"]))})
+    return out
