@@ -1,3 +1,4 @@
+# %%writefile ../src/opcal_amend.py
 """
 opcal_amend — procédure confirmatoire de l'amendement 1 et sa puissance (OP-Cal).
 
@@ -11,7 +12,7 @@ Tous les tests sont unilatéraux au seuil 2,5 % (équivalent à un IC bilatéral
                     (2b − 1)·Var(â) par rapport à la meilleure constante, qui est une référence théorique)
   C2  : Δℓ > 0     (gain de log-vraisemblance par patient d'OP-Cal contre E0, aucune correction ; comparaison
                     distincte de C1b : elle inclut aussi le décalage moyen)
-  C4  : U > 0      (mécanisme Y* = D × Y : test exact par permutation du score du log du taux de dosage)
+  C4  : U > 0      (mécanisme Y* = D × Y : test exact par permutation du score efficace pondéré du log du taux de dosage)
 Multiplicité : procédure graphique (Bretz et al. 2009), voir GRAPH_WEIGHTS et GRAPH_EDGES.
 """
 import numpy as np
@@ -120,25 +121,41 @@ def ratio_boot(num, den, n_boot=2000, seed=0):
 # ----------------------------------------------------------------------------------------------
 
 def _o_minus_e(stays, z_by_h):
-    """O_h − E_h par hôpital sous le modèle nul logit P(Y* = 1) = lp + alpha (alpha commun, MLE avec offset)."""
+    """O_h − E_h et E_h par hôpital sous le modèle nul logit P(Y* = 1) = lp + alpha (alpha commun, MLE avec offset)."""
     s = stays[stays["hospitalid"].isin(z_by_h.dropna().index)]
     lp, y = s["lp"].to_numpy(), s["y"].to_numpy(float)
     alpha = oc.offset_fit(lp, y)[0]
-    oe = pd.Series(y - oc.sigmoid(lp + alpha)).groupby(s["hospitalid"].to_numpy()).sum()
-    return oe, z_by_h.reindex(oe.index).to_numpy(float)
+    mu = oc.sigmoid(lp + alpha)
+    g = s["hospitalid"].to_numpy()
+    oe = pd.Series(y - mu).groupby(g).sum()
+    E = pd.Series(mu).groupby(g).sum().reindex(oe.index)
+    return oe, E, z_by_h.reindex(oe.index).to_numpy(float)
 
 
-def gamma_score_test(stays, z_by_h, n_perm=2000, seed=0):
-    """C4 : U = Σ_h (z_h − z̄)·(O_h − E_h). « Les hôpitaux qui dosent plus ont plus d'événements enregistrés que prévu. »
-    p = (1 + #{U* ≥ U}) / (B + 1), z permuté entre hôpitaux : test exact si le taux de dosage est indépendant des
-    écarts O − E sous H0, quel que soit le nombre d'événements par hôpital."""
-    oe, z = _o_minus_e(stays, z_by_h)
-    R, zc = oe.to_numpy(), z - z.mean()
+def gamma_score_test(stays, z_by_h, n_perm=2000, seed=0, tau2=0.0):
+    """C4 : U = Σ_h (z_h − z̄)·(O_h − E_h) / (1 + E_h·tau2). « Les hôpitaux qui dosent plus ont plus d'événements enregistrés
+    que prévu. » Le poids 1 / (1 + E_h·tau2) est celui du score efficace quand les hôpitaux sont surdispersés
+    (Var(O_h) ≈ E_h·(1 + E_h·tau2)) ; tau2 est fixé à l'avance (développement). tau2 = 0 : score non pondéré.
+    p = (1 + #{U* ≥ U}) / (B + 1), z permuté entre hôpitaux : exact si z est indépendant des écarts O − E sous H0
+    (les poids ne dépendent que du modèle nul, donc pas de la permutation)."""
+    oe, E, z = _o_minus_e(stays, z_by_h)
+    R = (oe / (1.0 + E * tau2)).to_numpy()
+    zc = z - z.mean()
     U = float(zc @ R)
     rng = np.random.default_rng(seed)
     perms = np.argsort(rng.random((n_perm, len(zc))), axis=1)
     Ustar = zc[perms] @ R
-    return {"U": U, "p_C4": float((1 + np.sum(Ustar >= U)) / (n_perm + 1)), "hopitaux": len(zc)}
+    return {"U": U, "p_C4": float((1 + np.sum(Ustar >= U)) / (n_perm + 1)), "hopitaux": len(zc),
+            "evenements_attendus": float(E.sum()), "information": float(np.sum(zc ** 2 * E / (1.0 + E * tau2)))}
+
+
+def c4_power_from_dev(p_dev, info_dev, E_locked, var_z, tau2, alphas=(ALPHA / 2, ALPHA)):
+    """Puissance de C4 extrapolée du développement : z observé au développement, mis à l'échelle de l'information
+    attendue au test verrouillé (Σ Var(z)·E_h / (1 + E_h·tau2)). Approximation : traite le z du développement comme vrai."""
+    z_dev = float(stats.norm.isf(p_dev))
+    info_locked = float(var_z * np.sum(E_locked / (1.0 + E_locked * tau2)))
+    z_lock = z_dev * np.sqrt(info_locked / info_dev)
+    return {"z_dev": z_dev, "z_verrouille": z_lock, **{f"puissance_a_{a:.4f}": float(stats.norm.sf(stats.norm.isf(a) - z_lock)) for a in alphas}}
 
 
 def gamma_estimate(stays, z_by_h, n_boot=2000, seed=0):
@@ -246,7 +263,7 @@ def simulate_mortality(n_eval, lp_pools, b, tau2, var_ahat, n_rep=500, n_boot=20
     return pd.DataFrame(out)
 
 
-def simulate_gamma(n_eval48, lp_pools, z_pool, gamma, tau2_resid, n_rep=500, n_perm=2000, seed=0):
+def simulate_gamma(n_eval48, lp_pools, z_pool, gamma, tau2_resid, n_rep=500, n_perm=2000, seed=0, tau2_weight=0.0):
     """Réplications de C4 : z_h tiré parmi les log taux de dosage du développement ; Y* ~ lp + γ·(z − z̄) + u_h.
     Test exact par permutation (n_perm, comme l'analyse finale) ; γ estimé par MLE (sans bootstrap)."""
     rng = np.random.default_rng(seed)
@@ -262,7 +279,7 @@ def simulate_gamma(n_eval48, lp_pools, z_pool, gamma, tau2_resid, n_rep=500, n_p
             parts.append(pd.DataFrame({"hospitalid": h, "lp": lp, "y": y}))
         st = pd.concat(parts, ignore_index=True)
         zs = pd.Series(z, index=range(K))
-        t = gamma_score_test(st, zs, n_perm, int(rng.integers(1e9)))
+        t = gamma_score_test(st, zs, n_perm, int(rng.integers(1e9)), tau2=tau2_weight)
         g_est = oc.offset_slope_fit(st["lp"].to_numpy(), st["y"].to_numpy(float),
                                     st["hospitalid"].map(zs).to_numpy(float) - z.mean())[1]
         out.append({"rep": r, "gamma_est": g_est, "p_C4": t["p_C4"], "evenements": int(st["y"].sum())})

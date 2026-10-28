@@ -1,12 +1,12 @@
 {
-  "document": "Amendement 1 à la spécification gelée OP-Cal (06c) — version 2",
-  "statut": "proposé (à valider avant dépôt)",
+  "document": "Amendement 1 à la spécification gelée OP-Cal (06c) — version 3",
+  "statut": "validé",
   "validation": {
-    "valide": false,
-    "par": "",
-    "date": ""
+    "valide": true,
+    "par": "Khalil (author)",
+    "date": "27/10/2026"
   },
-  "date": "2026-10-27T15:42:20",
+  "date": "2026-10-28T11:09:44",
   "protocol_hash": "d92099ea7c11d517",
   "specification": {
     "fichier": "results/06c_robustesse_opcal/specification_gelee.json",
@@ -18,7 +18,7 @@
     "nb01 (création du protocole, avant la conception d'OP-Cal) a affiché des statistiques groupées des labels du test verrouillé (effectifs, décès, mortalité de l'ensemble verrouillé) ; aucune statistique par hôpital verrouillé n'a été examinée.",
     "06b, 06c et la version 1 de 06d : la fonction gelée opcal_feas.site_descriptors et le contrôle 8 du 06b lisent le fichier clients/manifest.csv complet, qui contient la mortalité par hôpital de tous les hôpitaux, y compris verrouillés. Seules les colonnes n_stays et n_train des hôpitaux de développement sont utilisées ; aucune valeur d'hôpital verrouillé n'a été utilisée, affichée ni enregistrée (vérifiable dans le code : manifest.loc[D.index, 'n_stays'] et man.loc[DEV, 'n_train']).",
     "Aucun label, aucune prédiction et aucun descripteur d'hôpital verrouillé n'a été lu : stay_labels.parquet ne contient que les hôpitaux de développement (notebook 04), et les prédictions des notebooks 02 et 05 ne portent que sur eux.",
-    "06d version 2 : journal d'accès complet (tableau 'acces' de ce fichier) ; manifest lu avec les seules colonnes hospitalid, role, n_val, n_test."
+    "06d version 3 : journal d'accès complet (tableau 'acces' de ce fichier) ; manifest lu avec les seules colonnes hospitalid, role, n_val, n_test."
   ],
   "motif": "Puissance insuffisante du C1 gelé : 0.35 sous les estimations du développement (variance d'échantillonnage médiane de a_h ≈ 0.169 (environ 7 décès attendus par hôpital verrouillé) contre τ² ≈ 0.081 entre hôpitaux de développement). L'amendement précise aussi l'estimand, la portée de b > 1/2, les comparateurs et le contrôle de la multiplicité.",
   "affirmation_principale": "C1a : le signal de calibration des sites prédit sans label se transporte vers des hôpitaux nouveaux. L'amélioration (C1b, C2) est une affirmation confirmatoire secondaire, de puissance limitée sur ce jeu (0.36 et 0.33 sous les estimations du développement) ; sa preuve principale vient du développement (pente croisée b, gain de log-vraisemblance).",
@@ -74,7 +74,7 @@
       "code": "C4",
       "H1": "U > 0",
       "poids_initial": 0.5,
-      "test": "U = Σ_h (z_h − z̄)(O_h − E_h), O − E sous logit P(Y* = 1) = lp + alpha (alpha commun, MLE) ; z permuté entre hôpitaux, 2000 permutations (graine 2026) ; p = (1 + #{U* ≥ U}) / 2001 ; exact si z est indépendant des écarts O − E sous H0"
+      "test": "score efficace U = Σ_h (z_h − z̄)(O_h − E_h) / (1 + E_h·τ²), τ² = 0.3945 fixé sur le développement (hétérogénéité résiduelle après le terme mécanistique γ = 1) ; O − E et E sous logit P(Y* = 1) = lp + alpha (alpha commun, MLE) ; z permuté entre hôpitaux, 2000 permutations (graine 2026) ; p = (1 + #{U* ≥ U}) / 2001 ; exact si z est indépendant des écarts O − E sous H0"
     },
     {
       "code": "C1b",
@@ -182,11 +182,11 @@
       "C1a_seul": 0.892,
       "C1b_seul": 0.186,
       "C2_seul": 0.248,
-      "C4_seul": 0.99,
+      "C4_seul": 0.992,
       "C1a_confirme": 0.892,
-      "C4_confirme": 0.97,
+      "C4_confirme": 0.984,
       "C1b_confirme": 0.184,
-      "C2_confirme": 0.162,
+      "C2_confirme": 0.164,
       "b_estime_median": 0.769585711289178,
       "largeur_IC_mediane": 0.9297181627479816,
       "R2_tau_median": 0.4355863643475594
@@ -201,11 +201,11 @@
       "C1a_seul": 0.966,
       "C1b_seul": 0.524,
       "C2_seul": 0.602,
-      "C4_seul": 0.99,
+      "C4_seul": 0.992,
       "C1a_confirme": 0.966,
-      "C4_confirme": 0.98,
-      "C1b_confirme": 0.52,
-      "C2_confirme": 0.49,
+      "C4_confirme": 0.982,
+      "C1b_confirme": 0.522,
+      "C2_confirme": 0.492,
       "b_estime_median": 0.9606326246830681,
       "largeur_IC_mediane": 0.8973971776564478,
       "R2_tau_median": 0.7314199716508643
@@ -220,11 +220,11 @@
       "C1a_seul": 0.956,
       "C1b_seul": 0.362,
       "C2_seul": 0.434,
-      "C4_seul": 0.99,
+      "C4_seul": 0.992,
       "C1a_confirme": 0.956,
-      "C4_confirme": 0.972,
-      "C1b_confirme": 0.358,
-      "C2_confirme": 0.332,
+      "C4_confirme": 0.984,
+      "C1b_confirme": 0.36,
+      "C2_confirme": 0.334,
       "b_estime_median": 0.876911121014664,
       "largeur_IC_mediane": 0.9141253666134183,
       "R2_tau_median": 0.6319729135077206
@@ -239,11 +239,11 @@
       "C1a_seul": 0.792,
       "C1b_seul": 0.16,
       "C2_seul": 0.19,
-      "C4_seul": 0.99,
+      "C4_seul": 0.992,
       "C1a_confirme": 0.792,
-      "C4_confirme": 0.986,
-      "C1b_confirme": 0.158,
-      "C2_confirme": 0.14,
+      "C4_confirme": 0.998,
+      "C1b_confirme": 0.16,
+      "C2_confirme": 0.142,
       "b_estime_median": 0.7413387882429658,
       "largeur_IC_mediane": 1.016909995070049,
       "R2_tau_median": 0.23036782163266217
@@ -258,9 +258,9 @@
       "C1a_seul": 0.95,
       "C1b_seul": 0.406,
       "C2_seul": 0.486,
-      "C4_seul": 0.99,
+      "C4_seul": 0.992,
       "C1a_confirme": 0.95,
-      "C4_confirme": 0.98,
+      "C4_confirme": 0.994,
       "C1b_confirme": 0.402,
       "C2_confirme": 0.386,
       "b_estime_median": 0.9383677033746018,
@@ -277,9 +277,9 @@
       "C1a_seul": 0.916,
       "C1b_seul": 0.336,
       "C2_seul": 0.41,
-      "C4_seul": 0.99,
+      "C4_seul": 0.992,
       "C1a_confirme": 0.916,
-      "C4_confirme": 0.982,
+      "C4_confirme": 0.99,
       "C1b_confirme": 0.334,
       "C2_confirme": 0.31,
       "b_estime_median": 0.8765617437060194,
@@ -296,11 +296,11 @@
       "C1a_seul": 0.956,
       "C1b_seul": 0.362,
       "C2_seul": 0.434,
-      "C4_seul": 0.704,
+      "C4_seul": 0.754,
       "C1a_confirme": 0.942,
-      "C4_confirme": 0.608,
-      "C1b_confirme": 0.324,
-      "C2_confirme": 0.3,
+      "C4_confirme": 0.644,
+      "C1b_confirme": 0.33,
+      "C2_confirme": 0.302,
       "b_estime_median": 0.876911121014664,
       "largeur_IC_mediane": 0.9141253666134183,
       "R2_tau_median": 0.6319729135077206
@@ -310,9 +310,9 @@
     {
       "configuration nulle": "nul global : b = 0, γ = 0",
       "hypothèses nulles vraies": "C1a, C1b, C2, C4",
-      "erreur_globale": 0.03,
-      "erreur_globale_IC_bas": 0.016885984203873244,
-      "erreur_globale_IC_haut": 0.04899822570881894
+      "erreur_globale": 0.032,
+      "erreur_globale_IC_bas": 0.01839918532363991,
+      "erreur_globale_IC_haut": 0.05144676829164562
     },
     {
       "configuration nulle": "b = 0 ; γ du dév.",
@@ -331,9 +331,9 @@
     {
       "configuration nulle": "b du dév. ; γ = 0",
       "hypothèses nulles vraies": "C4",
-      "erreur_globale": 0.018,
-      "erreur_globale_IC_bas": 0.008262954434763135,
-      "erreur_globale_IC_haut": 0.033893696108537937
+      "erreur_globale": 0.022,
+      "erreur_globale_IC_bas": 0.011032276361257528,
+      "erreur_globale_IC_haut": 0.039022550844808795
     }
   ],
   "erreur_type_I": [
@@ -371,21 +371,31 @@
     },
     {
       "scénario": "γ = 0,5",
-      "C4 (p ≤ 2,5 %)": 0.704,
+      "C4 (p ≤ 2,5 %)": 0.754,
       "γ estimé médian": 0.5026416336341695,
       "événements médians": 108.0
     },
     {
       "scénario": "γ du dév.",
-      "C4 (p ≤ 2,5 %)": 0.99,
+      "C4 (p ≤ 2,5 %)": 0.992,
       "γ estimé médian": 0.9356253768319838,
       "événements médians": 115.0
     }
   ],
+  "puissance_C4_extrapolee_du_developpement": {
+    "z_dev": 3.290667365208565,
+    "z_verrouille": 3.1151935579009837,
+    "puissance_a_0.0125": 0.8088839124804201,
+    "puissance_a_0.0250": 0.876001786363033,
+    "p_dev_score_efficace": 0.0004997501249375312,
+    "p_dev_non_pondere": 0.017991004497751123,
+    "remarque": "la simulation (hétérogénéité gaussienne) est optimiste pour C4 ; cette extrapolation est plus réaliste"
+  },
+  "puissance_C1a_si_C4_echoue": 0.926,
   "code_sha256": {
     "opcal_feas.py": "9770a8614e7599eec47e725512db3f7e8a9d7488df8dd2d70a3667e6a4d80d48",
     "opcal_robust.py": "eaa1313c3521df86b66feb0040c0d2152b8660bf0413478efed4d48fcd5d6201",
-    "opcal_amend.py": "39f947c9a1f4035d4d07df42aab786d6c9b0e815cc878205c9003f1b63fff806"
+    "opcal_amend.py": "c292eea0ed5c5e529ebbfb4cab219159b6395a1f5a333b35a2d7e7a88507cbf7"
   },
   "acces": [
     {

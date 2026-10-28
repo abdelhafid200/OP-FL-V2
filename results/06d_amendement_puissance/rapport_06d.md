@@ -1,8 +1,8 @@
-# Rapport 06d (version 2) — puissance du test verrouillé et amendement 1
+# Rapport 06d (version 3) — puissance du test verrouillé et amendement 1
 
-Généré le 2026-10-27 15:42 par `notebooks/06d_amendement_puissance.ipynb`. Protocole `d92099ea7c11d517`. Agrégats uniquement.
+Généré le 2026-10-28 11:09 par `notebooks/06d_amendement_puissance.ipynb`. Protocole `d92099ea7c11d517`. Agrégats uniquement.
 
-**Amendement 1 : statut « proposé (à valider avant dépôt) »** — SHA-256 `7b74d3fa394112a8e0741a1f931ab6e75506baea3be71ba8484c6549c6e7e795`.
+**Amendement 1 : statut « validé »** — SHA-256 `cf4eceb83b8c6624f7e1f37dc2a87d29395080695d40cec2f7f79e35a5dfadc7`.
 Spécification gelée inchangée — SHA-256 `302a9b448a1adcf481802ce6827e95e8c9afb623c3b7cf39ac3ca9f9eead25ae`.
 
 **Motif :** Puissance insuffisante du C1 gelé : 0.35 sous les estimations du développement (variance d'échantillonnage médiane de a_h ≈ 0.169 (environ 7 décès attendus par hôpital verrouillé) contre τ² ≈ 0.081 entre hôpitaux de développement). L'amendement précise aussi l'estimand, la portée de b > 1/2, les comparateurs et le contrôle de la multiplicité.
@@ -22,7 +22,12 @@ Gain de log-vraisemblance par patient (développement) :
 | E0 | 0.00162 | 0.00054 | 0.00286 | 0.00100 |
 | E1 | 0.00154 | 0.00060 | 0.00271 | 0.00050 |
 
-Lactate (développement) : γ = 0.928 [0.516 ; 1.346] ; test exact de permutation p = 0.0180.
+Lactate (développement) : γ = 0.928 [0.516 ; 1.346] ; τ² résiduel = 0.395 ;
+test exact, score efficace : p = 0.0005 (non pondéré : 0.0180).
+
+**Puissance de C4 extrapolée du développement** (plus réaliste que la simulation, qui suppose une hétérogénéité gaussienne) :
+0.88 à 2,5 % et 0.81 à 1,25 %.
+**Puissance de C1a si C4 n'est pas rejeté** (seuil 1,25 %) : 0.93. Les conclusions de mortalité ne dépendent pas de C4.
 
 ## Puissance (96 hôpitaux verrouillés, médiane 70 patients d'évaluation ; procédure graphique)
 
@@ -31,22 +36,22 @@ Les colonnes « _confirme » correspondent à la procédure complète ; « _seul
 
 | scénario | b | tau2 | C1_gele | C3_gele | C1a_confirme | C4_confirme | C1b_confirme | C2_confirme | C1a_seul | C1b_seul | C2_seul | C4_seul | b_estime_median | largeur_IC_mediane |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| b = 0,8 | 0.800 | 0.081 | 0.188 | 0.134 | 0.892 | 0.970 | 0.184 | 0.162 | 0.892 | 0.186 | 0.248 | 0.990 | 0.770 | 0.930 |
-| b = 1 | 1.000 | 0.081 | 0.420 | 0.214 | 0.966 | 0.980 | 0.520 | 0.490 | 0.966 | 0.524 | 0.602 | 0.990 | 0.961 | 0.897 |
-| b du dév. | 0.916 | 0.081 | 0.346 | 0.156 | 0.956 | 0.972 | 0.358 | 0.332 | 0.956 | 0.362 | 0.434 | 0.990 | 0.877 | 0.914 |
-| b = 0,8 ; τ² = 0,12 | 0.800 | 0.120 | 0.158 | 0.072 | 0.792 | 0.986 | 0.158 | 0.140 | 0.792 | 0.160 | 0.190 | 0.990 | 0.741 | 1.017 |
-| b = 1 ; τ² = 0,12 | 1.000 | 0.120 | 0.366 | 0.212 | 0.950 | 0.980 | 0.402 | 0.386 | 0.950 | 0.406 | 0.486 | 0.990 | 0.938 | 0.975 |
-| b du dév. ; τ² = 0,12 | 0.916 | 0.120 | 0.322 | 0.174 | 0.916 | 0.982 | 0.334 | 0.310 | 0.916 | 0.336 | 0.410 | 0.990 | 0.877 | 0.986 |
-| b du dév. ; γ = 0,5 | 0.916 | 0.081 | 0.346 | 0.156 | 0.942 | 0.608 | 0.324 | 0.300 | 0.956 | 0.362 | 0.434 | 0.704 | 0.877 | 0.914 |
+| b = 0,8 | 0.800 | 0.081 | 0.188 | 0.134 | 0.892 | 0.984 | 0.184 | 0.164 | 0.892 | 0.186 | 0.248 | 0.992 | 0.770 | 0.930 |
+| b = 1 | 1.000 | 0.081 | 0.420 | 0.214 | 0.966 | 0.982 | 0.522 | 0.492 | 0.966 | 0.524 | 0.602 | 0.992 | 0.961 | 0.897 |
+| b du dév. | 0.916 | 0.081 | 0.346 | 0.156 | 0.956 | 0.984 | 0.360 | 0.334 | 0.956 | 0.362 | 0.434 | 0.992 | 0.877 | 0.914 |
+| b = 0,8 ; τ² = 0,12 | 0.800 | 0.120 | 0.158 | 0.072 | 0.792 | 0.998 | 0.160 | 0.142 | 0.792 | 0.160 | 0.190 | 0.992 | 0.741 | 1.017 |
+| b = 1 ; τ² = 0,12 | 1.000 | 0.120 | 0.366 | 0.212 | 0.950 | 0.994 | 0.402 | 0.386 | 0.950 | 0.406 | 0.486 | 0.992 | 0.938 | 0.975 |
+| b du dév. ; τ² = 0,12 | 0.916 | 0.120 | 0.322 | 0.174 | 0.916 | 0.990 | 0.334 | 0.310 | 0.916 | 0.336 | 0.410 | 0.992 | 0.877 | 0.986 |
+| b du dév. ; γ = 0,5 | 0.916 | 0.081 | 0.346 | 0.156 | 0.942 | 0.644 | 0.330 | 0.302 | 0.956 | 0.362 | 0.434 | 0.754 | 0.877 | 0.914 |
 
 ## Risque global d'erreur de la procédure complète (cible ≤ 0,025)
 
 | configuration nulle | hypothèses nulles vraies | erreur_globale | erreur_globale_IC_bas | erreur_globale_IC_haut |
 |---|---|---|---|---|
-| nul global : b = 0, γ = 0 | C1a, C1b, C2, C4 | 0.030 | 0.017 | 0.049 |
+| nul global : b = 0, γ = 0 | C1a, C1b, C2, C4 | 0.032 | 0.018 | 0.051 |
 | b = 0 ; γ du dév. | C1a, C1b, C2 | 0.032 | 0.018 | 0.051 |
 | b = 0,5 ; γ du dév. | C1b, C2 | 0.020 | 0.010 | 0.036 |
-| b du dév. ; γ = 0 | C4 | 0.018 | 0.008 | 0.034 |
+| b du dév. ; γ = 0 | C4 | 0.022 | 0.011 | 0.039 |
 
 Erreur de type I de chaque test seul :
 
@@ -62,8 +67,8 @@ C4 (lactate) :
 |  | C4 (p ≤ 2,5 %) | γ estimé médian | événements médians |
 |---|---|---|---|
 | γ = 0 | 0.030 | 0.008 | 104.000 |
-| γ = 0,5 | 0.704 | 0.503 | 108.000 |
-| γ du dév. | 0.990 | 0.936 | 115.000 |
+| γ = 0,5 | 0.754 | 0.503 | 108.000 |
+| γ du dév. | 0.992 | 0.936 | 115.000 |
 
 ## Journal d'accès aux fichiers
 
