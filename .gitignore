@@ -10,10 +10,17 @@ env/
 
 # Notebooks : fichiers temporaires, pas les notebooks sources
 .ipynb_checkpoints/
-notebooks/Untitled.ipynb
+/notebooks/*
+!/notebooks/06b_faisabilite_opcal.ipynb
+!/notebooks/06c_robustesse_opcal.ipynb
+!/notebooks/06d_amendement_puissance.ipynb
+!/notebooks/07_confirmation.ipynb
+!/notebooks/08_taille_sites.ipynb
+!/notebooks/09_domaine_extrapolation.ipynb
+!/notebooks/10_validation_v2.ipynb
 
-# Anciennes versions et rapports obsolètes
-docs/archives/
+
+
 
 # Fichiers locaux, secrets et fichiers temporaires
 .env
@@ -53,13 +60,16 @@ data_v1/*
 data_v1/splits/*
 !data_v1/splits/protocol.json
 
-# Données TDT-FL : conserver les métadonnées descriptives et le protocole.
-data_tdtfl/*
-!data_tdtfl/DATA_CARD_TDTFL.md
-!data_tdtfl/protocol_tdtfl.json
-!data_tdtfl/feature_info.json
-!data_tdtfl/feature_meta.csv
-!data_tdtfl/phenotype_map.csv
+# Ignorer les ajouts futurs à ces approches/données auxiliaires.
+# Les fichiers déjà suivis par Git restent versionnés.
+/docs/archives/
+/data_tdtfl/
+/src/tdtfl/
+/CLAUDE.md
+/submission/
+/submissions/
+CLAUDE.md
+
 
 # Résultats calculés : garder les rapports agrégés, figures et spécifications,
 # mais exclure prédictions, historiques, tableaux intermédiaires et données patient.
