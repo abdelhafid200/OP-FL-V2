@@ -60,6 +60,8 @@ data_v1/*
 data_v1/splits/*
 !data_v1/splits/protocol.json
 
+
+
 # Ignorer les ajouts futurs à ces approches/données auxiliaires.
 # Les fichiers déjà suivis par Git restent versionnés.
 /docs/archives/
@@ -68,6 +70,8 @@ data_v1/splits/*
 /CLAUDE.md
 /submission/
 /submissions/
+/data_tdtfl/*
+
 CLAUDE.md
 
 
